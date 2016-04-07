@@ -68,6 +68,7 @@ export default class Login extends Component {
             if(data.login=="true"){
                 console.log("login true");
                 deviceStore.saveData("currentPage",0);
+                deviceStore.saveData("loginToken",data.token);
                 Actions.classList();
             }else{
                 alert('Invalid username or password');

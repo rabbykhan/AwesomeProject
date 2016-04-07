@@ -4,6 +4,7 @@
 import React, {Component, Text, View, TouchableOpacity, Image, ScrollView } from 'react-native';
 import controlPanel from '../styles/controlPanelStyle';
 import Auth from '../services/Auth';
+import deviceStore from '../services/DeviceStorage';
 
 import {Actions} from 'react-native-router-flux';
 
@@ -11,6 +12,7 @@ export default class ControlPanel extends Component {
   
     logOut(){
         Auth.logOut();
+        deviceStore.saveData("loginToken",'');
         Actions.login();
     }
     render() {
@@ -21,7 +23,7 @@ export default class ControlPanel extends Component {
                         <TouchableOpacity 
                             style={controlPanel.link}
                             underlayColor="#2D2D30"
-                            onPress={Actions.classList}>
+                            onPress={Auth.loggedIn ? Actions.classList : Actions.login()}>
                             <Text style={controlPanel.linkText}>Class List</Text>
                         </TouchableOpacity>                
                     </View>
