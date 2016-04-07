@@ -90,7 +90,7 @@ export default class RootRouter extends Component {
 					<View style={layout.layout}>
 			            <Router  hideNavBar={true} dispatch={this.closeControlPanel.bind(this)} onEnter={this.isloggedIn()}>
 			                <Schema name="default" sceneConfig={Navigator.SceneConfigs.FloatFromRight}/> 
-			                <Route  name="login" component={Login} title="login" initial={true} />
+			                <Route  name="login" component={Login} title="login" />
 			                <Route name="classList" component={classList}  title="classList"   />               
 			                <Route name="attendance"  component={Attendance} title="Attendance"   />               
 			            </Router>

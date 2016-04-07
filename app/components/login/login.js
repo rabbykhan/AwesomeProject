@@ -76,10 +76,25 @@ export default class Login extends Component {
         }.bind(this))
     }
 
+    isAlreadyloggedIn(){
+        var returnData = true;
+        deviceStore.fetchData("loginToken",function(data){
+            console.log("loginToken "  + data);
+            if(data!= null){
+                returnData =true;
+            }
+            else{
+                returnData = false;
+            }
+            
+            //this.setState({checkboxAfternoon:false});
+        }.bind(this))
+        return returnData;
+    }
 
     render() {
 
-        if (this.state.loaded==true) {
+        if (this.isAlreadyloggedIn()) {
             return (
                  <View style={styles.container}>
                     <View style={styles.header} >
@@ -90,10 +105,8 @@ export default class Login extends Component {
                     </View>
                 </View>    
                 )
-        }
-
-
-        return(
+        }else{
+            return(
             <View style={styles.container}>
                 <View style={styles.header} >
                   <Text style={styles.logo}>{AppConfig.projectName}</Text>
@@ -120,5 +133,6 @@ export default class Login extends Component {
             </View>
             
         );
+        }
     }
 }

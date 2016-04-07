@@ -316,7 +316,7 @@ export default class attendanceList extends Component {
 						<StatusButton  
 						onPress={()=>this.presentAbsentAction(data.studentinfo.id,data.dates[this.state.today].status)} 
 						style={styles.removeAttendance} 
-						text={data.dates[this.state.today].status =="present" ? '' : 'X'} /> 
+						text={data.dates[this.state.today].status =="present" ? String.fromCharCode(10003) : 'X'} /> 
 				  		</View>
 				  	))}
 				</ScrollView>
