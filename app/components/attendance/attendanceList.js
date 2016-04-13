@@ -18,7 +18,11 @@ import Modal from 'react-native-simple-modal';
 import CheckBox from 'react-native-checkbox';
 import RightButton from './Buttons/rightButton';
 import LeftButton from './Buttons/leftButton';
-import StatusButton from './Buttons/statusButton'
+import StatusButton from './Buttons/statusButton';
+import CheckboxButton from './Buttons/checkboxButton';
+import CrossButton from './Buttons/crossButton'
+import UpdateButton from './Buttons/updateButton';
+import CheckboxStyle from './style/checkboxstyle';
 
 
 export default class attendanceList extends Component {
@@ -178,23 +182,25 @@ export default class attendanceList extends Component {
 			console.log(callbackdata);
 		}.bind(this))
 	}
-	updateStudentData(){
+	updateStudentData(studentid){
 		this.setState({
 			addOpen: false,
 			deleteOpen:false
 		});
-		for(var i=0;i<this.state.dataSource.length;i++){
+		
+		
+		/*for(var i=0;i<this.state.dataSource.length;i++){
 			console.log(this.state.currentStudentID);
 			console.log(this.state.dataSource[i].studentinfo.id);
-			if(this.state.currentStudentID === this.state.dataSource[i].studentinfo.id){
+			if(studentid === this.state.dataSource[i].studentinfo.id){
 				console.log("inside if condition");
-				console.log(this.state.dataSource[i].dates[this.state.today].status);
-				if(this.state.dataSource[i].dates[this.state.today].status==="present"){
+				console.log(this.state.dataSource[i].dates[this.state.today].status);*/
+				if(this.state.dataSource[studentid-1].dates[this.state.today].status==="present"){
 					console.log("inside second if condition");
-					this.state.dataSource[i].dates[this.state.today].status = "absent"
-					this.state.dataSource[i].dates[this.state.today].reason = this.state.reason;
-					console.log(this.state.dataSource[i].dates[this.state.today].status);
-					this.addStudentData(this.state.dataSource[i]);
+					this.state.dataSource[studentid-1].dates[this.state.today].status = "absent"
+					this.state.dataSource[studentid-1].dates[this.state.today].reason = this.state.reason;
+					console.log(this.state.dataSource[studentid-1].dates[this.state.today].status);
+					//this.addStudentData(this.state.dataSource[i]);
 					this.setState({
 						today:this.state.today,
 						todayindex:this.state.todayindex
@@ -203,16 +209,16 @@ export default class attendanceList extends Component {
 				else{
 						//define delete action
 						console.log("inside delete if action");
-						this.deleteAbsentStatus(this.state.dataSource[i].dates[this.state.today].id);
-						this.state.dataSource[i].dates[this.state.today].status = "present";
+						//this.deleteAbsentStatus(this.state.dataSource[i].dates[this.state.today].id);
+						this.state.dataSource[studentid-1].dates[this.state.today].status = "present";
 						this.setState({
 							today:this.state.today,
 							todayindex:this.state.todayindex
 						});	
 				}	
-				break;
-			}
-		}
+				//break;
+			//}
+		//}
 	}
 	handleTextChange(event)	{
 				//	log	statements	are	viewable	in	Xcode,
@@ -229,10 +235,15 @@ export default class attendanceList extends Component {
 
 	getMonth(){
 		var today = new Date(this.state.today);
-		 var monthNames = [ "January", "February", "March", "April", "May", "June", 
-                        "July", "August", "September", "October", "November", "December" ];
-		return ""+ monthNames[today.getUTCMonth()] + " " + today.getFullYear() + "";
+		 var monthNames = [ "JAN", "FEB", "MAR", "APR", "MAY", "JUN", 
+                        "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" ];
+		return ""+ monthNames[today.getUTCMonth()];
 		
+	}
+
+	getFullYear(){
+		var today = new Date(this.state.today);
+		return ""+ today.getFullYear();
 	}
 
 	getFormattedDate(){
@@ -273,178 +284,176 @@ export default class attendanceList extends Component {
 			}
 		}
 		if(this.state.weekendmsg){
-			showmsg = <View style={headerStyle.headerContainer}>	 	
+			showmsg = <View style={headerStyle.msgContainer}>	 	
 				 	<Text style={headerStyle.msgText}>School is closed today. You are viewing other weekdays.</Text>
 				</View>
 		}
 		
 		return(
-	    	<View>
+	    	<View style={{flex:1,flexDirection:'column'}}>
 	    		{showmsg}
 	    		<View style={headerStyle.headerContainer}>
-
-				 	<LeftButton onPress={()=>this.getPreviousDate()} style={headerStyle.prevBtn} /> 
-				 	<Text style={headerStyle.textStyle}> {this.getMonth()}</Text>
-				 	<RightButton onPress={()=>this.getNextDate()} style={headerStyle.nextBtn}/>
+	    			<View style={headerStyle.subheaderContainer}>
+				 		<LeftButton onPress={()=>this.getPreviousDate()} style={headerStyle.prevBtn} /> 
+				 		<View style={headerStyle.dateContainer}>
+					 		<Text style={headerStyle.textStyleMonth}> {this.getMonth()}</Text>
+					 		<Text style={headerStyle.textStyleDay}> {this.getFormattedDate()}</Text>
+					 		<Text style={headerStyle.textStyleYear}> {this.getFullYear()}</Text>
+				 		</View>
+				 		<RightButton onPress={()=>this.getNextDate()} style={headerStyle.nextBtn}/>
+				 	</View>
+				 	<Text style={headerStyle.dayContainer}>{this.getFormattedDay()}</Text>
 				</View>
-	    		<View style={styles.removeAttendanceContent}>
-	 						<View style={styles.attIDContent}>
-	 							<Text>ID</Text>
-	 						</View>
-	 						<View style={styles.attNameContent}>
-	 							<Text style={subtitleStyle.nameSubtitle}>Name</Text>
-	 						</View>
-	 						<View style={styles.dateConten}>
-	 							<View style={subtitleStyle.dateContainer}>
-	 							<View style={{backgroundColor:"#E0E0E0"}}>
-	 							<Text style={subtitleStyle.dayContainer}>{this.getFormattedDay()}</Text>
-	 							</View>
-	 							<Text style={subtitleStyle.numDateContainer}>{this.getFormattedDate()}</Text>
-	 							</View>
-	 						</View>
-				 </View>
-				<ScrollView>
-					
- 					{this.state.dataSource.map(data => (
- 						<View key={data.studentinfo.id} style={styles.removeAttendanceContent}>
-	 						<View style={styles.attIDContent}>
-	 							<Text>{data.studentinfo.id}</Text>
-	 						</View>
-	 						<View style={styles.attNameContent}>
-	 							<Text style={{alignSelf: 'center',color:'black'}}>{data.studentinfo.name}</Text>
-	 						</View>
-						<StatusButton  
-						onPress={()=>this.presentAbsentAction(data.studentinfo.id,data.dates[this.state.today].status)} 
-						style={styles.removeAttendance} 
-						text={data.dates[this.state.today].status =="present" ? String.fromCharCode(10003) : 'X'} /> 
-				  		</View>
-				  	))}
-				</ScrollView>
-
+				
+		    		<View style={styles.removeAttendanceContent}>
+		 						<View style={styles.attIDContent}>
+		 							<Text style={{textAlign: 'center', color:'#01B050',fontSize: 18}}>ID</Text>
+		 						</View>
+		 						<View style={styles.attNameContent}>
+		 							<Text style={subtitleStyle.nameSubtitle}>Name</Text>
+		 						</View>
+		 						<View style={styles.dateConten}>
+		 							
+		 							<Text style={{textAlign: 'center', color:'#01B050',fontSize:18}}>STATUS</Text>
+		 							
+		 						</View>
+					 </View>
+					<ScrollView >
+						<View>
+	 					{this.state.dataSource.map(data => (
+	 						<View key={data.studentinfo.id} style={styles.removeAttendanceContent}>
+		 						<View style={styles.attIDContent}>
+		 							<Text style={{textAlign: 'center', color:'black',fontSize: 18}}>{data.studentinfo.id}</Text>
+		 						</View>
+		 						<View style={styles.attNameContent}>
+		 							<Text style={subtitleStyle.studentNamesubtitle}>{data.studentinfo.name}</Text>
+		 						</View>
+							<StatusButton  
+							onPress={()=>this.updateStudentData(data.studentinfo.id)}
+							style={styles.removeAttendance}
+							color={data.dates[this.state.today].status =="present" ? 'green' : 'red'} 
+							text={String.fromCharCode(9632) } /> 
+					  		</View>
+					  	))}
+					  	<UpdateButton 
+                  			style={{backgroundColor: '#01B050',
+        					padding: 10,
+        					flexDirection: 'row',
+        					height: 60,
+        					margin:10,
+       						}} 
+                  			text="Update"
+                  				
+                  			/>
+					  	</View>
+					</ScrollView>
+				
 				<Modal
 						               offset={this.state.offset}
 						               open={ this.state.addOpen}
 						               modalDidOpen={() => console.log('modal did open')}
 						               modalDidClose={() => this.setState({addOpen: false})}
-						               style={{alignItems: 'center'}}>
-						               <View>
-						               		<Text style={{fontSize: 20, marginBottom: 10, justifyContent: 'center', alignItems: 'center'}}>Student Attendance</Text>
-		                  					<TextInput
-		                        				style={styles.textInput}
-		                        				text="Reason"
-		                        				placeholder = "Reason"
-		                        				placeholderTextColor = "red"
-		                        				onSubmitEditing={this.handleTextChange}
-		                   					/>
-						                  
-						                  <CheckBox
-                    						style={{margin: 5,marginBottom:10}}
-                    						label='Forenoon'
-                    						labelStyle ={{margin: 5,padding:5}}
-                    						checked={this.state.checkboxForenoon}
-                    						onChange={(checked) => this.checkboxForenoonAction()}
-                  						  />
-						                  <CheckBox
-                    						style={{margin: 5,marginBottom:10}}
-                    						label='Afternoon'
-                    						labelStyle ={{margin: 5,padding:5}}
-                    						checked={this.state.checkboxAfternoon}
-                    						onChange={(checked) => this.checkboxAfternoonAction()}
-                  						  />
-
-                  						  <CustomButton 
-                  						  style={{backgroundColor: '#1E90FF',
+						               style={{backgroundColor: "#C5DFC5"}}>
+						               <View style={{
+						               	flexDirection:'column',backgroundColor: "#FFFFFF"
+						               }}>
+						               		<View style={{flexDirection:'row',alignSelf: 'flex-end'}}>
+						               			<CrossButton onPress={() => this.setState({addOpen: false})}>
+						               			</CrossButton>
+						               		</View>
+		                  					<View style={{flexDirection:'row',marginLeft:10 }}>
+		                  						<Text style={this.state.checkboxForenoon ? CheckboxStyle.checkboxGreen : CheckboxStyle.checkboxRed}>
+		                  						{String.fromCharCode(9632)}
+		                  						</Text>
+		                  						<CheckboxButton text="Forenoon" style={{
 	                  						  margin:10,
 	        									padding: 10,
 	        									flex: 0.4,
+	        								}} 
+	        								onPress={()=>this.checkboxForenoonAction()}>
+		                  						
+		                  						</CheckboxButton>
+		                  					</View>
+
+		                  					<View style={{flexDirection:'row',marginLeft:10}}>
+		                  						<Text style={this.state.checkboxAfternoon ? CheckboxStyle.checkboxGreen : CheckboxStyle.checkboxRed}>
+		                  						{String.fromCharCode(9632)}</Text>
+		                  						<CheckboxButton text="Afternoon" style={{
+	                  						  margin:10,
+	        									padding: 10,
+	        									flex: 0.4,
+	        								}} 
+	        								onPress={()=>this.checkboxAfternoonAction()}>
+		                  						
+		                  						</CheckboxButton>
+		                  					</View>
+		                  					
+                  						  <UpdateButton 
+                  						  style={{backgroundColor: '#C5DFC5',
+	                  						  margin:10,
+	        									padding: 10,
+	        									width: 200,
+	        									flex: 0.4,
+	        									alignSelf: 'center',
 	        									borderColor:'#f6f6f6'}} 
-                  						  text="Add"
+                  						  text="Update"
                   						  onPress={()=>this.updateStudentData()}	
                   						  />
-						                  <TouchableOpacity
-						                     style={{margin: 15,
-						                     	padding: 10,
-        										borderColor: 'transparent',
-        										borderWidth:2,
-        										alignSelf: 'center',
-        										borderRadius: 2,
-       											width: 200,
-        										height: 50,
-        										
-        										backgroundColor: '#B2BEB5'}}
-						                     onPress={() => this.setState({addOpen: false})}>
-						                     <Text 
-						                     style={{fontSize: 20,
-						                     	alignSelf: 'center'}}>
-						                     	Close
-						                     </Text>
-						                  </TouchableOpacity>
 						               </View>
 				</Modal> 
 				<Modal
 						               offset={this.state.offset}
 						               open={ this.state.deleteOpen}
 						               modalDidOpen={() => console.log('modal did open')}
-						               modalDidClose={() => this.setState({deleteOpen: false})}
-						               style={{alignItems: 'center'}}>
-						               <View>
-						               		<Text style={{fontSize: 20, marginBottom: 10, justifyContent: 'center', alignItems: 'center'}}>Student Attendance</Text>
-						                 <TextInput
-		                        				style={styles.textInput}
-		                        				onSubmitEditing={this.handleTextChange}
-		                   					/>
-		                   					<CheckBox
-                    						style={{margin: 5,marginBottom:10}}
-                    						label='Forenoon'
-                    						labelStyle ={{margin: 5,padding:5}}
-                    						checked={this.state.checkboxForenoon}
-                    						onChange={(checked) => this.checkboxForenoonAction()}
-                  						  />
-						                  <CheckBox
-                    						style={{margin: 5,marginBottom:10}}
-                    						label='Afternoon'
-                    						labelStyle ={{margin: 5,padding:5}}
-                    						checked={this.state.checkboxAfternoon}
-                    						onChange={(checked) => this.checkboxAfternoonAction()}
-                  						  />
-						                 <View style={{flexDirection:'row',alignSelf: 'center'}}>
-	                  						  <CustomButton 
-	                  						  style={{backgroundColor: '#1E90FF',
+						               modalDidClose={() => this.setState({addOpen: false})}
+						               style={{backgroundColor: "#C5DFC5"}}>
+						               <View style={{
+						               	flexDirection:'column',backgroundColor: "#FFFFFF"
+						               }}>
+						               		<View style={{flexDirection:'row',alignSelf: 'flex-end'}}>
+						               			<CrossButton onPress={() => this.setState({addOpen: false})}>
+						               			</CrossButton>
+						               		</View>
+		                  					<View style={{flexDirection:'row',marginLeft:10 }}>
+		                  						<Text style={this.state.checkboxForenoon ? CheckboxStyle.checkboxGreen : CheckboxStyle.checkboxRed}>
+		                  						{String.fromCharCode(9632)}
+		                  						</Text>
+		                  						<CheckboxButton text="Forenoon" style={{
 	                  						  margin:10,
 	        									padding: 10,
 	        									flex: 0.4,
-	        									borderColor:'#f6f6f6'}} 
-	                  						  text="Update"
-	                  						  onPress={()=>this.updateStudentData()}	
-	                  						  />
-	                  						  <CustomButton 
-	                  						  style={{backgroundColor: '#191919',
-	                  						  margin:10,
-	        									padding: 10,
-	        									flex: 0.4,
-	        									borderColor:'#f6f6f6'}} 
-	                  						  text="Delete"
-	                  						  onPress={()=>this.updateStudentData()}	
-	                  						  />
-                  						  </View>
+	        								}} 
+	        								onPress={()=>this.checkboxForenoonAction()}>
+		                  						
+		                  						</CheckboxButton>
+		                  					</View>
 
-						                  <TouchableOpacity
-						                      style={{margin: 15,
-						                     	padding: 10,
-        										borderColor: 'transparent',
-        										borderWidth:2,
-        										alignSelf: 'center',
-        										borderRadius: 2,
-       											width: 200,
-        										height: 50,
-        										
-        										backgroundColor: '#B2BEB5'}}
-						                     onPress={() => this.setState({deleteOpen: false})}>
-						                     <Text style={{fontSize: 20,
-						                     alignSelf: 'center'}}>Close</Text>
-						                  </TouchableOpacity>
+		                  					<View style={{flexDirection:'row',marginLeft:10}}>
+		                  						<Text style={this.state.checkboxAfternoon ? CheckboxStyle.checkboxGreen : CheckboxStyle.checkboxRed}>
+		                  						{String.fromCharCode(9632)}</Text>
+		                  						<CheckboxButton text="Afternoon" style={{
+	                  						  margin:10,
+	        									padding: 10,
+	        									flex: 0.4,
+	        								}} 
+	        								onPress={()=>this.checkboxAfternoonAction()}>
+		                  						
+		                  						</CheckboxButton>
+		                  					</View>
+		                  					
+                  						  <UpdateButton 
+                  						  style={{backgroundColor: '#C5DFC5',
+	                  						  margin:10,
+	        									padding: 10,
+	        									width: 200,
+	        									flex: 0.4,
+	        									alignSelf: 'center',
+	        									borderColor:'#f6f6f6'}} 
+                  						  text="Delete"
+                  						  onPress={()=>this.updateStudentData()}	
+                  						  />
 						               </View>
-				</Modal>   	  	
+				</Modal>  	
 
 			</View>
 		);

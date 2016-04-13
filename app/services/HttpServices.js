@@ -56,7 +56,18 @@ module.exports = {
 
   					studentsinfo.push(student); //this will be the new array we will pass to the callback
 				})
+				function compare(a,b) {
+  					if (a.studentinfo.id < b.studentinfo.id)
+    					return -1;
+  					else if (a.studentinfo.id > b.studentinfo.id)
+    					return 1;
+  					else 
+    					return 0;
+				}
 
+				studentsinfo.sort(compare);
+				
+				console.log(studentsinfo);
 				dataList.studentsinfo = studentsinfo;
 				dataList.today = data.today;
 				dataList.dates = data.dates;

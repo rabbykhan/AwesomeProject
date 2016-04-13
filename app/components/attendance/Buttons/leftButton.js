@@ -13,7 +13,6 @@ export default class LeftButton extends Component {
                 source={require('./Image/leftarrow.png')} 
                 resizeMode = "contain"
                 style={{
-                	padding:10,
                 	margin:5,
                 	width: 40, 
                 	height: 40,

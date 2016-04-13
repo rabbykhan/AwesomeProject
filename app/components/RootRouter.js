@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Component, Navigator, Text, View} from 'react-native';
+import React, {Component, Navigator, Text, View,DrawerLayoutAndroid} from 'react-native';
 import {Router, Route, Schema,Actions} from 'react-native-router-flux';
 import EventEmitter from 'EventEmitter';
 import Drawer from 'react-native-drawer'
@@ -12,6 +12,7 @@ import layout from '../styles/layoutStyle';
 import AppEventEmitter from '../services/AppEventEmitter';
 import Auth from '../services/Auth';
 import deviceStore from '../services/DeviceStorage';
+import Navbar from '../widgets/Navbar';
 
 export default class RootRouter extends Component {
 	
@@ -19,7 +20,8 @@ export default class RootRouter extends Component {
         super(props);
         this.state = {
         	loggedIn : false,
-        	acceptPan:false
+        	acceptPan:false,
+        	transparency:false
         };
         
     }
@@ -36,7 +38,7 @@ export default class RootRouter extends Component {
 	closeControlPanel(navigation) {
 		if(navigation.type == 'AFTER_ROUTER_ROUTE') {
 			// need to more work for "before route"
-			this.refs.drawer.close();
+			this.refs.drawer.closeDrawer();
 			console.log("inside close control panel");
 			if(Auth.loggedIn()==false){
 			//if(!this.state.loggedIn){
@@ -46,13 +48,16 @@ export default class RootRouter extends Component {
 				}	
 			}
 			else{
+				deviceStore.saveData("currentPage",'0');
 				this.setState({acceptPan:true});
 			}
 		}
+		
 	}
 
 	openControlPanel() {
-	   this.refs.drawer.open();
+	   this.refs.drawer.openDrawer();
+	   
 	}
 
 	isloggedIn(){
@@ -75,27 +80,24 @@ export default class RootRouter extends Component {
 	}
 
     render() {
+    	var navigationView=(<ControlPanel/>);
         return(
-       		 <Drawer
-       		 	diabled={true}
-        		style={{marginBottom: 20}}
-				ref="drawer"
-				type="overlay"
-				acceptPan={this.state.acceptPan}				
-  				tapToClose={true}
-				openDrawerOffset={0.2}
-				panCloseMask={0.2}
-				content={<ControlPanel/>}
-				>
+			<DrawerLayoutAndroid
+              drawerWidth={300}
+              drawerHeight={200}
+              ref={'drawer'}
+              drawerPosition={DrawerLayoutAndroid.positions.Left}
+              renderNavigationView={() => navigationView}>
 					<View style={layout.layout}>
-			            <Router  hideNavBar={true} dispatch={this.closeControlPanel.bind(this)} onEnter={this.isloggedIn()}>
-			                <Schema name="default" sceneConfig={Navigator.SceneConfigs.FloatFromRight}/> 
-			                <Route  name="login" component={Login} title="login" />
-			                <Route name="classList" component={classList}  title="classList"   />               
-			                <Route name="attendance"  component={Attendance} title="Attendance"   />               
-			            </Router>
-		            </View>
-            </Drawer>
+				        <Router  hideNavBar={true} dispatch={this.closeControlPanel.bind(this)} onEnter={this.isloggedIn()}>
+				               
+				                <Route  name="login" component={Login} title="login" />
+				                <Route name="classList" component={classList}  title="classList"   />               
+				                <Route name="attendance"  component={Attendance} title="Attendance"   />               
+				        </Router>
+			        </View>
+			        
+            </DrawerLayoutAndroid>
 		       
         );
     }

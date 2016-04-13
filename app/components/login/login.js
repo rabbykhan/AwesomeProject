@@ -33,6 +33,7 @@ BackAndroid.addEventListener('backButton', function() {
         }
         else{
             //alert("Are you sure you want to exit the app");
+            deviceStore.saveData("currentPage",'0');
             BackAndroid.exitApp();
             returnData ='';
 
@@ -77,19 +78,14 @@ export default class Login extends Component {
     }
 
     isAlreadyloggedIn(){
-        var returnData = true;
-        deviceStore.fetchData("loginToken",function(data){
-            console.log("loginToken "  + data);
-            if(data!= null){
-                returnData =true;
-            }
-            else{
-                returnData = false;
-            }
-            
-            //this.setState({checkboxAfternoon:false});
-        }.bind(this))
-        return returnData;
+        if(Auth.loggedIn()==false){
+            console.log("not logged in ");
+           return false; 
+        }
+        else{
+            console.log("logged in");
+            return true;
+        }
     }
 
     render() {
@@ -109,7 +105,11 @@ export default class Login extends Component {
             return(
             <View style={styles.container}>
                 <View style={styles.header} >
-                  <Text style={styles.logo}>{AppConfig.projectName}</Text>
+                  <Text style={styles.logo}>
+                            <Text style={{color:'#01B050',textAlign:'center'}}>আমার</Text>
+                            <Text style={{color:'red',textAlign:'center'}}>.</Text>
+                            <Text style={{color:'#01B050',textAlign:'center'}}>স্কুল</Text>
+                    </Text>
                 </View>
                 <View style={styles.loginContent}>
                     <TextInput

@@ -13,6 +13,8 @@ var styles = StyleSheet.create({
 		alignItems: 'center',
 		flexDirection: 'row',
 		padding: 15,
+		position:'relative',
+		top:0
     }
 });
 

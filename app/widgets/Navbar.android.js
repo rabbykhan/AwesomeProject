@@ -13,13 +13,15 @@ export default class Navbar extends Component {
     }
     render() {
         return(
-            <ToolbarAndroid   
-                actions={[{title: ' ',icon: require('../img/menu.png'),show: 'always'}]}
-                title={this.props.title}
-                titleColor="#000"
-                style={styles.toolbarContent}
-                onActionSelected={this.open}
-                />            
+            <View style={{backgroundColor:'#01B050'}} elevation={10} >
+                <ToolbarAndroid   
+                    actions={[{title: ' ',icon: require('../img/menu.png'),show: 'always'}]}
+                    title={this.props.title}
+                    titleColor="#FFF"
+                    style={styles.toolbarContent}
+                    onActionSelected={this.open}
+                    />
+            </View>                  
         );
     }
 }

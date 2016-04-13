@@ -10,9 +10,8 @@ var {
 
 module.exports = StyleSheet.create({
 	sidebar: {
-        padding: 10,
         paddingRight: 0,	        
-        paddingTop: 30,
+        paddingTop: 60,
  		backgroundColor: sidebar,
  		flex: 1,     		
     },
@@ -20,16 +19,17 @@ module.exports = StyleSheet.create({
      	color:'white'
     },
     linkText: {
-     	fontSize: 16,
+     	fontSize: 25,
      	color: '#fff',
-        position: 'absolute',
-        left: 15
+        left: 15,
+        textAlign:'right',
+        marginRight:25,
     },    
     link: {    
         position: 'relative',
     	borderWidth: 1,
         paddingTop: 14,
-        height: 50,        
+        height: 70,        
     	borderTopColor: 'transparent',
     	borderLeftColor: 'transparent',
     	borderRightColor: 'transparent',

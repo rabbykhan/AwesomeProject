@@ -16,7 +16,7 @@ export default class Attendance extends Component {
 	render() {
 		console.log("course id = " + this.props.batch_id);
 		return(
-	    	<View style={styles.classlistContent}>
+	    	<View style={{flex:1,flexDirection:'column'}}>
 				<Navbar title="Class Attendance " />
 					<AttendanceList batch_id={this.props.batch_id}/>
 			</View>

@@ -22,6 +22,7 @@ export default class classContent extends Component {
 				<ScrollView style={styles.classListView} >
 					<ClassList /> 
 				</ScrollView>
+			
 	        </View>
 		);
 	}

@@ -24,16 +24,15 @@ var styles = StyleSheet.create({
   attIDContent: {
       backgroundColor: 'white',
       padding: 10,
-      flex: 0.1,
+      flex: 0.2,
       height: 50
-      
   },
   attNameContent: {
       backgroundColor: 'white',
         padding: 10,
         marginLeft:2,
-        flex: 0.9,
-        height: 50
+        flex: 0.8,
+        height: 50,
         
   },
   dateConten:{
@@ -53,7 +52,6 @@ var styles = StyleSheet.create({
        
   },
    removeAttendanceContent:{
-        backgroundColor: "#E0E0E0",
         flexDirection:'row',
         height: 50,
         paddingLeft:5,
@@ -94,7 +92,15 @@ var styles = StyleSheet.create({
         height: 40, 
         marginBottom:10,
          padding: 4
-        }
+        },
+  listParentContainer :{
+    backgroundColor: "#C5DFC5",
+    paddingBottom: 80,
+    paddingLeft:5,
+    paddingRight:5,
+    marginLeft:5,
+    marginRight:5
+  }     
 });
 
 

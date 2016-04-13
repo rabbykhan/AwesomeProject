@@ -54,12 +54,12 @@ export default class ClassList extends Component {
 		}
 		return(
 	    	<View>
-	    		<ScrollView>
+	    		
  					{this.state.dataSource.map(data => (
  						
 						<CustomButton  onPress={()=>this.loadNextPage(data.course_id)} key={data.id} style={styles.customButton} text={data.name} /> 
 				  	))}
-				</ScrollView> 
+			 		
 		    </View>
 		);
 	}

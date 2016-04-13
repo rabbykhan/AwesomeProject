@@ -29,18 +29,18 @@ var styles = StyleSheet.create({
     alignSelf: 'center'
   },
   customButton:{
-        backgroundColor: '#558B2F',
+        backgroundColor: '#01B050',
         padding: 10,
         borderColor: 'transparent',
         borderWidth:2,
         borderRadius: 2,
         flexDirection: 'row',
-        height: 50,
+        height: 60,
         marginBottom:5,
         paddingLeft:30,
         borderColor:'#f6f6f6',
-         marginLeft:15,
-         marginRight:15,
+        marginLeft:15,
+        marginRight:15,
 
 
   },
