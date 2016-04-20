@@ -1,7 +1,7 @@
 /* @flow */
 'use strict';
 
-import React, {Component, Text, View, ScrollView,TouchableOpacity,TextInput,Image} from 'react-native';
+import React, {Component, Text, View, ScrollView,TouchableOpacity,TextInput,ToastAndroid, Alert,Image} from 'react-native';
 import Navbar from '../../widgets/Navbar';
 import Loading from '../../widgets/loading';
 import AppConfig from '../../../app/config';
@@ -162,18 +162,32 @@ export default class attendanceList extends Component {
 		}
 		
 	}
-	addStudentData(data){
+	showAlert(){
+		Alert.alert( '', 'Are You Sure ?', 
+			[ 
+				{text: 'OK', onPress: () => this.addStudentData()},
+				{text: 'Cancel', style: 'cancel'}, 
+				
+			] );
+	}
+
+	addStudentData(){
+		var data = this.state.dataSource;
 		var datatopass={};
-		datatopass.studentinfo = data.studentinfo;
+		datatopass.studentinfo = data;
 		datatopass.batchID = this.props.batch_id;
-		datatopass.dateinfo = data.dates[this.state.today];
+		
 		datatopass.todayDate = this.state.today;
 		datatopass.forenoon = this.state.checkboxForenoon;
 		datatopass.Afternoon = this.state.checkboxAfternoon;
 
+		console.log("data 2 pass = " + datatopass);
+
 
 		HttpServices.addStudentInfo(datatopass,function(callbackdata){
 			console.log(callbackdata);
+			console.log("inside update callback function");
+			Actions.pop();
 		}.bind(this))
 	}
 
@@ -205,6 +219,7 @@ export default class attendanceList extends Component {
 						today:this.state.today,
 						todayindex:this.state.todayindex
 					});	
+					ToastAndroid.show('Student marked as absent', ToastAndroid.SHORT);
 				}
 				else{
 						//define delete action
@@ -214,7 +229,8 @@ export default class attendanceList extends Component {
 						this.setState({
 							today:this.state.today,
 							todayindex:this.state.todayindex
-						});	
+						});
+						ToastAndroid.show('Student marked as present', ToastAndroid.SHORT);	
 				}	
 				//break;
 			//}
@@ -237,18 +253,18 @@ export default class attendanceList extends Component {
 		var today = new Date(this.state.today);
 		 var monthNames = [ "JAN", "FEB", "MAR", "APR", "MAY", "JUN", 
                         "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" ];
-		return ""+ monthNames[today.getUTCMonth()];
+		return monthNames[today.getUTCMonth()];
 		
 	}
 
 	getFullYear(){
 		var today = new Date(this.state.today);
-		return ""+ today.getFullYear();
+		return today.getFullYear();
 	}
 
 	getFormattedDate(){
 		var today = new Date(this.state.today);
-		return " " + today.getUTCDate();
+		return  today.getUTCDate();
 	}
 
 	getFormattedDay(){
@@ -296,9 +312,15 @@ export default class attendanceList extends Component {
 	    			<View style={headerStyle.subheaderContainer}>
 				 		<LeftButton onPress={()=>this.getPreviousDate()} style={headerStyle.prevBtn} /> 
 				 		<View style={headerStyle.dateContainer}>
-					 		<Text style={headerStyle.textStyleMonth}> {this.getMonth()}</Text>
-					 		<Text style={headerStyle.textStyleDay}> {this.getFormattedDate()}</Text>
-					 		<Text style={headerStyle.textStyleYear}> {this.getFullYear()}</Text>
+				 			<View style={headerStyle.monthView}>
+					 			<Text style={headerStyle.textStyleMonth}> {this.getMonth()}</Text>
+					 		</View>
+					 		<View style={headerStyle.dayView}>
+					 			<Text style={headerStyle.textStyleDay}> {this.getFormattedDate()}</Text>
+					 		</View>
+					 		<View style={headerStyle.yearView}>
+					 			<Text style={headerStyle.textStyleYear}> {this.getFullYear()}</Text>
+					 		</View>
 				 		</View>
 				 		<RightButton onPress={()=>this.getNextDate()} style={headerStyle.nextBtn}/>
 				 	</View>
@@ -343,7 +365,7 @@ export default class attendanceList extends Component {
         					margin:10,
        						}} 
                   			text="Update"
-                  				
+                  			onPress={()=>this.showAlert()}
                   			/>
 					  	</View>
 					</ScrollView>

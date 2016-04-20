@@ -1,14 +1,18 @@
 import AppConfig from '../../app/config';
 import Auth from './Auth';
+
 module.exports = {
-	headerContent(methodType){
+	headerContent(methodType,postObjct=null){
+		console.log("token = " + Auth.getToken().trim());
 		return({
 			method:methodType,
 	   		headers: {
-	   		'authenticity_token':Auth.getToken().trim(),
+	   		'authToken':Auth.getToken().trim(),
 	    	'Accept': 'application/json',
 	        'Content-Type': 'application/json',
-	    	}
+	    	},
+	    	body:postObjct
+
 		})
 	},
 	studentAtendances(ID,callback){
@@ -110,49 +114,45 @@ module.exports = {
 		});
 	},
 	addStudentInfo(data,callback){
+		console.log(data);
+
+		var attendanceList = [];
 		var attendances={
-			attendance:{
-			student_id : data.studentinfo.id,
-			month_date : data.todayDate,
-			batch_id : data.batchID,
-			reason:data.dateinfo.reason,
-			forenoon:0,
-			afternoon:0
-			},
+			attendance:[],
 			commit:"add"
 		}
-		if(data.forenoon && data.afternoon){
-			attendances.attendance.forenoon = 1;
-			attendances.attendance.afternoon = 1;
+		console.log("length = " + data.studentinfo.length);
+		for(var i=0;i<data.studentinfo.length;i++){
+			var attendance={
+				student_id : "",
+				month_date : "",
+				batch_id : "",
+				reason:"unknown",
+				status:"",
+				forenoon:0,
+				afternoon:0
+			}
+			attendance.student_id = data.studentinfo[i].studentinfo.id;
+			attendance.month_date = data.todayDate;
+			attendance.batch_id = data.batchID;
+			attendance.status = data.studentinfo[i].dates[data.todayDate].status
+			attendanceList.push(attendance);
 		}
-		else if(!data.forenoon && !data.afternoon){
-			attendances.attendance.forenoon = 0;
-			attendances.attendance.afternoon = 0;
-		}
-		if(!data.forenoon && data.afternoon){
-			attendances.attendance.forenoon = 0;
-			attendances.attendance.afternoon = 1;
-		}
-		if(data.forenoon && !data.afternoon){
-			attendances.attendance.forenoon = 1;
-			attendances.attendance.afternoon = 0;
-		}
-		
-		console.log(attendances);
+
+		attendances.attendance = attendanceList;
+
 		fetch(AppConfig.apiSiteUrl+'attendances',this.headerContent('POST',
           JSON.stringify({
           	attendances
-        })
-      )).then((data) => data.json())
+          })
+      	)).then((data) => data.json())
       .then((data) =>{
-        console.log('token',data.token);
-        this.setToken(data.token);
-        calback(data)
-      
+        console.log(data);
+      	callback(data);
       })
       .catch((error) => {
         alert('error')  
-      });  
+      });   
 	},
 
 	deleteAbsent(data,callback){

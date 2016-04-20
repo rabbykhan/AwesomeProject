@@ -14,6 +14,9 @@ import Auth from '../services/Auth';
 import deviceStore from '../services/DeviceStorage';
 import Navbar from '../widgets/Navbar';
 
+import Dimensions from 'Dimensions';
+
+
 export default class RootRouter extends Component {
 	
 	constructor(props) {
@@ -81,9 +84,11 @@ export default class RootRouter extends Component {
 
     render() {
     	var navigationView=(<ControlPanel/>);
+    	var deviceheight = Dimensions.get('window').height;
+		var sideDrawerwidth = Dimensions.get('window').width * 70 /100;
         return(
 			<DrawerLayoutAndroid
-              drawerWidth={300}
+              drawerWidth={sideDrawerwidth}
               drawerHeight={200}
               ref={'drawer'}
               drawerPosition={DrawerLayoutAndroid.positions.Left}

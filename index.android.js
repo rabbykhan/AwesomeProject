@@ -4,11 +4,11 @@
  */
 
 'use strict';
+
 import React, {
     AppRegistry,
     Component
 } from 'react-native';
-
 import RootRouter from './app/components/RootRouter';
 
 class AmrSchool extends Component {

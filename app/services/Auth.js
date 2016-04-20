@@ -12,6 +12,10 @@ module.exports = {
     })
   },
   login:function(userName, pass,calback) {
+    console.log(JSON.stringify({
+          userName: userName,
+          pass: pass,
+        }));
     fetch(AppConfig.apiSiteUrl+'login',this.headerContent('POST',
           JSON.stringify({
           userName: userName,
@@ -19,6 +23,8 @@ module.exports = {
         })
       )).then((data) => data.json())
       .then((data) =>{
+        console.log("data");
+        console.log(data);
         console.log('token',data.token);
         this.setToken(data.token);
         calback(data)
@@ -43,6 +49,7 @@ module.exports = {
     return true
   },
   loggedIn:function() {
+    console.log("loggedin function = " + this.getToken())
     if(this.getToken()==''){
       return false;
     }else{

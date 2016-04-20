@@ -15,33 +15,50 @@ var styles = StyleSheet.create({
       paddingRight:5,
        backgroundColor: '#FFFFFF'
   },
-  textStyleMonth:{
+  monthView:{
     backgroundColor: '#FFFFFF',
+    alignItems:'center',
+    flexDirection:'row',
+    padding:5,
     flex:0.3,
-    fontSize: 25,
-    textAlign: 'center',
-    color:'#686868',
     marginRight:2.5,
     marginLeft:5
   },
-  textStyleDay:{
-    backgroundColor: '#FFFFFF',
-    flex:0.2,
+  textStyleMonth:{
+    flex:1,
     fontSize: 25,
-    textAlign: 'left',
-    color:'#686868',
-    paddingLeft:5,
+    textAlign: 'center',
+    color:'#686868'
+  },
+  dayView:{
+    backgroundColor: '#FFFFFF',
+    alignItems:'center',
+    flexDirection:'row',
+    padding:5,
+    flex:0.2,
     marginRight:2.5,
     marginLeft:2.5
   },
-  textStyleYear:{
-    backgroundColor: '#FFFFFF',
-    flex:0.3,
+  textStyleDay:{
+    flex:1,
     fontSize: 25,
     textAlign: 'center',
-    color:'#686868',
+    color:'#686868'
+  },
+  yearView:{
+    backgroundColor: '#FFFFFF',
+    alignItems:'center',
+    flexDirection:'row',
+    padding:5,
+    flex:0.3,
     marginRight:5,
     marginLeft:2.5
+  },
+  textStyleYear:{
+    flex:1,
+    fontSize: 25,
+    textAlign: 'center',
+    color:'#686868'
   },
   msgText:{
   	flex:0.5,
