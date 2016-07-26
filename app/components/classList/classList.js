@@ -35,6 +35,7 @@ export default class ClassList extends Component {
     }
 
     loadNextPage(batchID){
+    	console.log("batchID = " + batchID);
     	deviceStore.fetchData("currentPage",function(data){
         	var currentPage = Number(data) + 1;
         	console.log("currentPage " + currentPage);
@@ -57,7 +58,7 @@ export default class ClassList extends Component {
 	    		
  					{this.state.dataSource.map(data => (
  						
-						<CustomButton  onPress={()=>this.loadNextPage(data.course_id)} key={data.id} style={styles.customButton} text={data.name} /> 
+						<CustomButton  onPress={()=>this.loadNextPage(data.id)} key={data.id} style={styles.customButton} text={data.course_full_name} /> 
 				  	))}
 			 		
 		    </View>

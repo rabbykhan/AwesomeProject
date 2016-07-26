@@ -10,6 +10,7 @@ import AppConfig from '../../../app/config';
 import {Scene,Actions} from 'react-native-router-flux';
 import AppEventEmitter from '../../services/AppEventEmitter';
 import Auth from '../../services/Auth';
+import languageService from '../../services/languageService';
 import deviceStore from '../../services/DeviceStorage';
 import Loading from '../../widgets/loading';
 
@@ -50,7 +51,7 @@ export default class Login extends Component {
         super(props);
         this.state = {
             userName: 'admin',
-            password:'admin123',
+            password:'A.S@1',
             loding:false,
             login:false
         };
@@ -128,7 +129,7 @@ export default class Login extends Component {
                         
                     <Button
                             onPress={()=>this.login()}
-                            text="Login" />   
+                            text={languageService.getLoginText()} />   
                 </View>  
             </View>
             

@@ -55,7 +55,6 @@ var styles = StyleSheet.create({
     marginLeft:2.5
   },
   textStyleYear:{
-    flex:1,
     fontSize: 25,
     textAlign: 'center',
     color:'#686868'

@@ -5,7 +5,7 @@ import React, {Component, Text, View, ScrollView} from 'react-native';
 import Navbar from '../../widgets/Navbar';
 import styles from './style/attendanceStyle';
 import AttendanceList from "./attendanceList"
-
+import languageService from '../../services/languageService';
 
 export default class Attendance extends Component {
 	constructor(props) {
@@ -17,7 +17,7 @@ export default class Attendance extends Component {
 		console.log("course id = " + this.props.batch_id);
 		return(
 	    	<View style={{flex:1,flexDirection:'column'}}>
-				<Navbar title="Class Attendance " />
+				<Navbar title={languageService.getNavbarContent("attendance")} />
 					<AttendanceList batch_id={this.props.batch_id}/>
 			</View>
 

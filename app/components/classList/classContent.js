@@ -5,6 +5,7 @@ import React, {Component, Text, View, ScrollView} from 'react-native';
 import Navbar from '../../widgets/Navbar';
 import styles from './style/classlistStyle';
 import ClassList from './classList';
+import languageService from '../../services/languageService';
 
 
 export default class classContent extends Component {
@@ -16,9 +17,10 @@ export default class classContent extends Component {
     }
 
 	render() {
+		console.log("class content render");
 		return(
 	    	<View style={styles.classlistContent}>
-	     		<Navbar title="Class List" />
+	     		<Navbar title={languageService.getNavbarContent("classlist")} />
 				<ScrollView style={styles.classListView} >
 					<ClassList /> 
 				</ScrollView>

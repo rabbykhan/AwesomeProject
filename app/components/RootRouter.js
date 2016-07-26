@@ -13,19 +13,24 @@ import AppEventEmitter from '../services/AppEventEmitter';
 import Auth from '../services/Auth';
 import deviceStore from '../services/DeviceStorage';
 import Navbar from '../widgets/Navbar';
-
+import languageData from '../languages/language.json';
 import Dimensions from 'Dimensions';
-
+import languageService from '../services/languageService';
 
 export default class RootRouter extends Component {
 	
+	//var languageData = require('../languages/language.json');
+
 	constructor(props) {
+
         super(props);
         this.state = {
         	loggedIn : false,
-        	acceptPan:false,
-        	transparency:false
+        	lockstatus:'locked-closed',
+        	transparency:false,
+        	toggleValue:false
         };
+        this.toggleButtonPressed = this.toggleButtonPressed.bind(this);
         
     }
     componentWillMount(){
@@ -52,15 +57,14 @@ export default class RootRouter extends Component {
 			}
 			else{
 				deviceStore.saveData("currentPage",'0');
-				this.setState({acceptPan:true});
+				//this.setState({lockstatus:'unlocked'});
 			}
 		}
 		
 	}
 
 	openControlPanel() {
-	   this.refs.drawer.openDrawer();
-	   
+	   this.refs.drawer.openDrawer();   
 	}
 
 	isloggedIn(){
@@ -73,21 +77,29 @@ export default class RootRouter extends Component {
         	console.log("loginToken "  + data);
         	if(data!= null){
         		Auth.setToken(data);
-        		this.setState({loggedIn:true,acceptPan:true});
+        		this.setState({loggedIn:true,lockstatus:'unlocked',toggleValue:languageService.getToggleValue()});
         		Actions.classList();
         	}
-        	
-        	//this.setState({checkboxAfternoon:false});
+        	else{
+        		this.setState({toggleValue:languageService.getToggleValue(),lockstatus:'locked-closed'});
+        		
+        	}
     	}.bind(this))
     
 	}
 
+	toggleButtonPressed(value){
+		this.setState({toggleValue: value});
+	}
+
     render() {
-    	var navigationView=(<ControlPanel/>);
+    	var navigationView=(<ControlPanel toggleValue={this.state.toggleValue} togglePress={this.toggleButtonPressed}/>);
     	var deviceheight = Dimensions.get('window').height;
 		var sideDrawerwidth = Dimensions.get('window').width * 70 /100;
+		console.log(DrawerLayoutAndroid.props);
         return(
 			<DrawerLayoutAndroid
+			  	
               drawerWidth={sideDrawerwidth}
               drawerHeight={200}
               ref={'drawer'}
@@ -95,10 +107,9 @@ export default class RootRouter extends Component {
               renderNavigationView={() => navigationView}>
 					<View style={layout.layout}>
 				        <Router  hideNavBar={true} dispatch={this.closeControlPanel.bind(this)} onEnter={this.isloggedIn()}>
-				               
-				                <Route  name="login" component={Login} title="login" />
-				                <Route name="classList" component={classList}  title="classList"   />               
-				                <Route name="attendance"  component={Attendance} title="Attendance"   />               
+				            <Route  name="login" component={Login} title="login" />
+				            <Route name="classList" component={classList}  title="classList"   />               
+				            <Route name="attendance"  component={Attendance} title="Attendance"   />               
 				        </Router>
 			        </View>
 			        

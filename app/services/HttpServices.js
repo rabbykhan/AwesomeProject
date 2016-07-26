@@ -1,5 +1,6 @@
 import AppConfig from '../../app/config';
 import Auth from './Auth';
+import Student from './studentData/Students';
 
 module.exports = {
 	headerContent(methodType,postObjct=null){
@@ -19,77 +20,7 @@ module.exports = {
 		fetch(AppConfig.apiSiteUrl+'student_attendances?batch_id='+ID,this.headerContent('GET'))
 			.then((data) => data.json())
 			.then((data) => {
-				console.log(data);
-				//for sorting "it should return from backend "
-				var dataList={
-					studentsinfo:[],
-					dates:[],
-					today:""
-				};
-
-				var studentsinfo = [];
-				var dateinfo={
-				  dates:{}
-				};
-
-				data.dates.map(function(data){
-
-				  dateinfo.dates[data] = {
-				    status: "present"
-				  }; 
-
-				})
-				
-				data.students.map(function(studentdata){
-					//dataList.push(studentdata.student); //previous data array we are passing to the callback
-
-					var student={
-    					studentinfo:{},
-  					};
-					student.studentinfo = studentdata.student;
-
-					student.dates = (JSON.parse(JSON.stringify(dateinfo.dates))); // cloning object , normal use of "=" will refer to the original
-
-					var absentdate = Object.keys(data.leaves[student.studentinfo.id]);
-					console.log(absentdate);
-					for(var i=0;i<absentdate.length;i++){
-					    
-					    student.dates[absentdate[i]].status = "absent";
-					    student.dates[absentdate[i]].id = data.leaves[student.studentinfo.id][absentdate[i]];
-					}
-
-  					studentsinfo.push(student); //this will be the new array we will pass to the callback
-				})
-				function compare(a,b) {
-  					if (a.studentinfo.id < b.studentinfo.id)
-    					return -1;
-  					else if (a.studentinfo.id > b.studentinfo.id)
-    					return 1;
-  					else 
-    					return 0;
-				}
-
-				studentsinfo.sort(compare);
-				
-				console.log(studentsinfo);
-				dataList.studentsinfo = studentsinfo;
-				dataList.today = data.today;
-				dataList.dates = data.dates;
-				if(data.dates.length == 0){
-					dataList.emptydate = true;
-				}else{
-					dataList.emptydate = false;
-				}
-				var weekend = true;
-				for(var i=0;i<data.dates.length;i++){
-					if(dataList.today == data.dates[i]){
-						weekend = false;
-						console.log("weekday found");	
-					}
-				}
-				if(weekend) console.log("today is weekend");
-				dataList.weekend = weekend;
-				console.log(dataList);
+				var dataList = Student.createObject(data);
 				callback(dataList)
 		 	})
 		.catch((error) => {
@@ -124,22 +55,33 @@ module.exports = {
 		console.log("length = " + data.studentinfo.length);
 		for(var i=0;i<data.studentinfo.length;i++){
 			var attendance={
-				student_id : "",
-				month_date : "",
-				batch_id : "",
-				reason:"unknown",
+				"attendance":{
+					student_id : "",
+					month_date : "",
+					batch_id : "",
+					reason:"unknown",
+					forenoon:0,
+					afternoon:0
+				},
 				status:"",
-				forenoon:0,
-				afternoon:0
+				absent_id:""
 			}
-			attendance.student_id = data.studentinfo[i].studentinfo.id;
-			attendance.month_date = data.todayDate;
-			attendance.batch_id = data.batchID;
+			attendance.attendance.student_id = data.studentinfo[i].studentinfo.id;
+			attendance.attendance.month_date = data.todayDate;
+			attendance.attendance.batch_id = data.batchID;
 			attendance.status = data.studentinfo[i].dates[data.todayDate].status
+			if(data.studentinfo[i].dates[data.todayDate].hasOwnProperty('id')){
+				attendance.absent_id = data.studentinfo[i].dates[data.todayDate].id;
+			}
+			else{
+				attendance.absent_id = "";
+			}
 			attendanceList.push(attendance);
 		}
 
 		attendances.attendance = attendanceList;
+
+		console.log(attendances)
 
 		fetch(AppConfig.apiSiteUrl+'attendances',this.headerContent('POST',
           JSON.stringify({
@@ -147,6 +89,7 @@ module.exports = {
           })
       	)).then((data) => data.json())
       .then((data) =>{
+      	console.log("printing return data");
         console.log(data);
       	callback(data);
       })

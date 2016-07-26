@@ -1,0 +1,43 @@
+{
+		"drawer":{
+			"classlist":"Class List",
+			"logout":"Logout"
+		},
+		"navbar":{
+			"classlist":"Class List",
+			"attendance":"Class Attendance"
+		},
+		"attendance":{
+			"id":"ID",
+			"name":"Name",
+			"status":"STATUS",
+			"JAN":"JAN",
+			"FEB":"FEB",
+			"MAR":"MAR",
+			"APR":"APR",
+			"MAY":"MAY",
+			"JUN":"JUN",
+			"JUL":"JUL",
+			"AUG":"AUG",
+			"SEP":"SEP", 
+			"OCT":"OCT", 
+			"NOV":"NOV", 
+			"DEC":"DEC",
+			"Sunday":"Sunday",
+			"Monday":"Monday",
+			"Tuesday":"Tuesday",
+			"Wednesday":"Wednesday",
+			"Thursday":"Thursday",
+			"Friday":"Friday",
+			"Saturday":"Saturday",
+			"update":"Update",
+			"confirmationalert":"Are you sure ?",
+			"ok":"OK",
+			"cancel":"Cancel",
+			"absenttoast":"Student marked as absent",
+			"presenttoast":"student marked as present",
+			"loading":"Loading data..." 
+
+		},
+		"login":"Login"
+}

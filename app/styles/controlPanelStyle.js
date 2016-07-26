@@ -37,5 +37,12 @@ module.exports = StyleSheet.create({
     },
     close: {
         marginTop: 15
+    },
+    toggleText:{
+        fontSize: 25,
+        color: '#fff',
+        left: 15,
+        textAlign:'right',
+        marginRight:20,
     }
 });

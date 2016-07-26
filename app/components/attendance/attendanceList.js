@@ -12,43 +12,31 @@ import subtitleStyle from './style/pageSubtitleStyle';
 import {Actions} from 'react-native-router-flux';
 import AppEventEmitter from '../../services/AppEventEmitter';
 import HttpServices from '../../services/HttpServices';
-import Button from '../../widgets/Button';
-import Dialogue from './dialogue';
-import Modal from 'react-native-simple-modal';
-import CheckBox from 'react-native-checkbox';
 import RightButton from './Buttons/rightButton';
 import LeftButton from './Buttons/leftButton';
 import StatusButton from './Buttons/statusButton';
-import CheckboxButton from './Buttons/checkboxButton';
-import CrossButton from './Buttons/crossButton'
 import UpdateButton from './Buttons/updateButton';
-import CheckboxStyle from './style/checkboxstyle';
-
+import languageService from '../../services/languageService';
+import numberConversion from '../../services/numberConversion';
+import dataManipulation from '../../services/studentData/StudentManipulation';
 
 export default class attendanceList extends Component {
 	constructor(props){
     	super(props);
     	this.state = {
 	      dataSource:[],
-	      date:[],
+	      date:[],																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																						
 	      today:"",
 	      todayindex: 0,
 	      loaded: false,
-	      showDialogue:false,
-	      addOpen:false,
-	      deleteOpen:false,
-	      checkboxForenoon:true,
-	      checkboxAfternoon:true,
-	      currentStudentID:"",
 	      reason:"",
 	      weekend:false,
 	      weekendmsg:false,
 	      emptydate:false
 	    };
 
-	    this.handleTextChange = this.handleTextChange.bind(this);
-
     }
+
 	getBatchList(){
 		console.log("course id" + this.props.batch_id);
 		var batchID=this.props.batch_id;
@@ -73,32 +61,25 @@ export default class attendanceList extends Component {
 		        	}
 		        }
 	    	}
-
     	}.bind(this))
-    	
-    	//alert('studentID remove  ' + studentId);
     }
-    removeAttendance(studentId){
-    	console.log("inside showing dialogue");
-    	this.setState({
-    		showDialogue:true
-    	});
 
-    }
     componentDidMount(){
-    	//need to add this functoin to service page
     	this.getBatchList();
-    	AppEventEmitter.addListener('removeAt', this.removeAttendance.bind(this));
 	}
 
-    componentWillUnMount() {
-    	AppEventEmitter.removeListener('removeAt');
-    }
-
-	getNextDate(){
+	getDate(indication){
+		var index;
+		if(indication == "next"){
+			index = this.state.todayindex +1;
+		}
+		else{
+			index = this.state.todayindex -1;
+		}
 		if(!this.state.emptydate){
-			var index = this.state.todayindex +1;
+			//var index = this.state.todayindex +1;
 			if(index >= (this.state.dates.length)) index = 0;
+			else if(index < 0) index = this.state.dates.length - 1;
 			this.setState({ 
 				today: this.state.dates[index],
 				todayindex: index
@@ -110,63 +91,11 @@ export default class attendanceList extends Component {
 		
 	}
 
-	getPreviousDate(){
-		if(!this.state.emptydate){
-			var index = this.state.todayindex - 1;
-			if(index < 0) index = this.state.dates.length - 1;
-			this.setState({ 
-				today: this.state.dates[index],
-				todayindex: index
-			});
-		}
-		else{
-			this.viewEmptyStudentAlert();
-		}
-		
-	}
-
-	checkboxForenoonAction(){
-		if(this.state.checkboxForenoon){
-			this.setState({checkboxForenoon:false});
-		}
-		else{
-			this.setState({checkboxForenoon:true});
-		}
-	}
-
-	checkboxAfternoonAction(){
-		if(this.state.checkboxAfternoon){
-			this.setState({checkboxAfternoon:false});
-		}
-		else{
-			this.setState({checkboxAfternoon:true});
-		}
-	}
-
-	presentAbsentAction(studentid,status){
-		this.setState({
-			currentStudentID: studentid,
-			open:true
-		});
-		if(status == "present"){
-			this.setState({
-				addOpen:true,
-				deleteOpen:false
-			});
-		}
-		else{
-			this.setState({
-				addOpen:false,
-				deleteOpen:true
-			});
-		}
-		
-	}
 	showAlert(){
-		Alert.alert( '', 'Are You Sure ?', 
+		Alert.alert( '', languageService.getAttendanceContent("confirmationalert"), 
 			[ 
-				{text: 'OK', onPress: () => this.addStudentData()},
-				{text: 'Cancel', style: 'cancel'}, 
+				{text: languageService.getAttendanceContent("ok"), onPress: () => this.addStudentData()},
+				{text: languageService.getAttendanceContent("cancel"), style: 'cancel'}, 
 				
 			] );
 	}
@@ -181,7 +110,8 @@ export default class attendanceList extends Component {
 		datatopass.forenoon = this.state.checkboxForenoon;
 		datatopass.Afternoon = this.state.checkboxAfternoon;
 
-		console.log("data 2 pass = " + datatopass);
+		console.log("data 2 pass = ");
+		console.log(datatopass);
 
 
 		HttpServices.addStudentInfo(datatopass,function(callbackdata){
@@ -191,58 +121,37 @@ export default class attendanceList extends Component {
 		}.bind(this))
 	}
 
-	deleteAbsentStatus(data){
-		HttpServices.deleteAbsent(data,function(callbackdata){
-			console.log(callbackdata);
-		}.bind(this))
-	}
 	updateStudentData(studentid){
 		this.setState({
 			addOpen: false,
 			deleteOpen:false
 		});
-		
-		
-		/*for(var i=0;i<this.state.dataSource.length;i++){
-			console.log(this.state.currentStudentID);
-			console.log(this.state.dataSource[i].studentinfo.id);
-			if(studentid === this.state.dataSource[i].studentinfo.id){
-				console.log("inside if condition");
-				console.log(this.state.dataSource[i].dates[this.state.today].status);*/
-				if(this.state.dataSource[studentid-1].dates[this.state.today].status==="present"){
-					console.log("inside second if condition");
-					this.state.dataSource[studentid-1].dates[this.state.today].status = "absent"
-					this.state.dataSource[studentid-1].dates[this.state.today].reason = this.state.reason;
-					console.log(this.state.dataSource[studentid-1].dates[this.state.today].status);
-					//this.addStudentData(this.state.dataSource[i]);
-					this.setState({
-						today:this.state.today,
-						todayindex:this.state.todayindex
-					});	
-					ToastAndroid.show('Student marked as absent', ToastAndroid.SHORT);
-				}
-				else{
-						//define delete action
-						console.log("inside delete if action");
-						//this.deleteAbsentStatus(this.state.dataSource[i].dates[this.state.today].id);
-						this.state.dataSource[studentid-1].dates[this.state.today].status = "present";
-						this.setState({
-							today:this.state.today,
-							todayindex:this.state.todayindex
-						});
-						ToastAndroid.show('Student marked as present', ToastAndroid.SHORT);	
-				}	
-				//break;
-			//}
-		//}
-	}
-	handleTextChange(event)	{
-				//	log	statements	are	viewable	in	Xcode,
-				//	or	the	Chrome	debug	tools
-				console.log(event.nativeEvent.text);
-				this.setState({
-						reason:	event.nativeEvent.text
-				});
+			
+		console.log("dates property not undefined");
+		if(this.state.dataSource[studentid].dates[this.state.today].status==="present"){
+			console.log("inside second if condition");
+			this.state.dataSource[studentid].dates[this.state.today].status = "absent"
+			this.state.dataSource[studentid].dates[this.state.today].reason = this.state.reason;
+			console.log(this.state.dataSource[studentid].dates[this.state.today].status);
+			//this.addStudentData(this.state.dataSource[i]);
+			this.setState({
+				today:this.state.today,
+				todayindex:this.state.todayindex
+			});	
+			ToastAndroid.show(languageService.getAttendanceContent("absenttoast"), ToastAndroid.SHORT);
+		}
+		else{
+			//define delete action
+			console.log("inside delete if action");
+			//this.deleteAbsentStatus(this.state.dataSource[i].dates[this.state.today].id);
+			this.state.dataSource[studentid].dates[this.state.today].status = "present";
+			this.setState({
+				today:this.state.today,
+				todayindex:this.state.todayindex
+			});
+			ToastAndroid.show(languageService.getAttendanceContent("presenttoast"), ToastAndroid.SHORT);	
+		}
+
 	}
 
 	viewEmptyStudentAlert(){
@@ -253,24 +162,26 @@ export default class attendanceList extends Component {
 		var today = new Date(this.state.today);
 		 var monthNames = [ "JAN", "FEB", "MAR", "APR", "MAY", "JUN", 
                         "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" ];
-		return monthNames[today.getUTCMonth()];
+		return languageService.getAttendanceContent(monthNames[today.getUTCMonth()]);
 		
 	}
 
 	getFullYear(){
 		var today = new Date(this.state.today);
-		return today.getFullYear();
+		return numberConversion.convert2BanglaNumber(today.getFullYear());
+		//return today.getFullYear();
 	}
 
 	getFormattedDate(){
 		var today = new Date(this.state.today);
-		return  today.getUTCDate();
+		return numberConversion.convert2BanglaNumber(today.getUTCDate());
+		//return  today.getUTCDate();
 	}
 
 	getFormattedDay(){
 		var today = new Date(this.state.today);
 		var dayNames =["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-		return "" + dayNames[today.getUTCDay()];
+		return languageService.getAttendanceContent(dayNames[today.getUTCDay()]);
 	}	
 
 	
@@ -310,7 +221,7 @@ export default class attendanceList extends Component {
 	    		{showmsg}
 	    		<View style={headerStyle.headerContainer}>
 	    			<View style={headerStyle.subheaderContainer}>
-				 		<LeftButton onPress={()=>this.getPreviousDate()} style={headerStyle.prevBtn} /> 
+				 		<LeftButton onPress={()=>this.getDate("previous")} style={headerStyle.prevBtn} /> 
 				 		<View style={headerStyle.dateContainer}>
 				 			<View style={headerStyle.monthView}>
 					 			<Text style={headerStyle.textStyleMonth}> {this.getMonth()}</Text>
@@ -322,38 +233,41 @@ export default class attendanceList extends Component {
 					 			<Text style={headerStyle.textStyleYear}> {this.getFullYear()}</Text>
 					 		</View>
 				 		</View>
-				 		<RightButton onPress={()=>this.getNextDate()} style={headerStyle.nextBtn}/>
+				 		<RightButton onPress={()=>this.getDate("next")} style={headerStyle.nextBtn}/>
 				 	</View>
 				 	<Text style={headerStyle.dayContainer}>{this.getFormattedDay()}</Text>
 				</View>
 				
 		    		<View style={styles.removeAttendanceContent}>
 		 						<View style={styles.attIDContent}>
-		 							<Text style={{textAlign: 'center', color:'#01B050',fontSize: 18}}>ID</Text>
+		 							<Text style={{textAlign: 'center', color:'#01B050',fontSize: 18}}>{languageService.getAttendanceContent("id")}</Text>
 		 						</View>
 		 						<View style={styles.attNameContent}>
-		 							<Text style={subtitleStyle.nameSubtitle}>Name</Text>
+		 							<Text style={subtitleStyle.nameSubtitle}>{languageService.getAttendanceContent("name")}</Text>
 		 						</View>
 		 						<View style={styles.dateConten}>
 		 							
-		 							<Text style={{textAlign: 'center', color:'#01B050',fontSize:18}}>STATUS</Text>
+		 							<Text style={{textAlign: 'center', color:'#01B050',fontSize:18}}>{languageService.getAttendanceContent("status")}</Text>
 		 							
 		 						</View>
 					 </View>
 					<ScrollView >
 						<View>
-	 					{this.state.dataSource.map(data => (
+	 					{dataManipulation.getStudents().map(data => (
 	 						<View key={data.studentinfo.id} style={styles.removeAttendanceContent}>
 		 						<View style={styles.attIDContent}>
-		 							<Text style={{textAlign: 'center', color:'black',fontSize: 18}}>{data.studentinfo.id}</Text>
+		 							<Text style={{textAlign: 'center', color:'black',fontSize: 18}}>{numberConversion.convert2BanglaNumber(data.studentinfo.class_roll_no)}</Text>
 		 						</View>
 		 						<View style={styles.attNameContent}>
-		 							<Text style={subtitleStyle.studentNamesubtitle}>{data.studentinfo.name}</Text>
+		 							<Text style={subtitleStyle.studentNamesubtitle}>
+		 							{languageService.getStudentName(data.studentinfo)}
+		 							</Text>
 		 						</View>
 							<StatusButton  
-							onPress={()=>this.updateStudentData(data.studentinfo.id)}
-							style={styles.removeAttendance}
+							onPress={()=>this.updateStudentData(data.arrayentry)}
+							arrayentry={data.arrayentry}
 							color={data.dates[this.state.today].status =="present" ? 'green' : 'red'} 
+							style={styles.removeAttendance}
 							text={String.fromCharCode(9632) } /> 
 					  		</View>
 					  	))}
@@ -364,118 +278,12 @@ export default class attendanceList extends Component {
         					height: 60,
         					margin:10,
        						}} 
-                  			text="Update"
+                  			text={languageService.getAttendanceContent("update")}
                   			onPress={()=>this.showAlert()}
+
                   			/>
 					  	</View>
 					</ScrollView>
-				
-				<Modal
-						               offset={this.state.offset}
-						               open={ this.state.addOpen}
-						               modalDidOpen={() => console.log('modal did open')}
-						               modalDidClose={() => this.setState({addOpen: false})}
-						               style={{backgroundColor: "#C5DFC5"}}>
-						               <View style={{
-						               	flexDirection:'column',backgroundColor: "#FFFFFF"
-						               }}>
-						               		<View style={{flexDirection:'row',alignSelf: 'flex-end'}}>
-						               			<CrossButton onPress={() => this.setState({addOpen: false})}>
-						               			</CrossButton>
-						               		</View>
-		                  					<View style={{flexDirection:'row',marginLeft:10 }}>
-		                  						<Text style={this.state.checkboxForenoon ? CheckboxStyle.checkboxGreen : CheckboxStyle.checkboxRed}>
-		                  						{String.fromCharCode(9632)}
-		                  						</Text>
-		                  						<CheckboxButton text="Forenoon" style={{
-	                  						  margin:10,
-	        									padding: 10,
-	        									flex: 0.4,
-	        								}} 
-	        								onPress={()=>this.checkboxForenoonAction()}>
-		                  						
-		                  						</CheckboxButton>
-		                  					</View>
-
-		                  					<View style={{flexDirection:'row',marginLeft:10}}>
-		                  						<Text style={this.state.checkboxAfternoon ? CheckboxStyle.checkboxGreen : CheckboxStyle.checkboxRed}>
-		                  						{String.fromCharCode(9632)}</Text>
-		                  						<CheckboxButton text="Afternoon" style={{
-	                  						  margin:10,
-	        									padding: 10,
-	        									flex: 0.4,
-	        								}} 
-	        								onPress={()=>this.checkboxAfternoonAction()}>
-		                  						
-		                  						</CheckboxButton>
-		                  					</View>
-		                  					
-                  						  <UpdateButton 
-                  						  style={{backgroundColor: '#C5DFC5',
-	                  						  margin:10,
-	        									padding: 10,
-	        									width: 200,
-	        									flex: 0.4,
-	        									alignSelf: 'center',
-	        									borderColor:'#f6f6f6'}} 
-                  						  text="Update"
-                  						  onPress={()=>this.updateStudentData()}	
-                  						  />
-						               </View>
-				</Modal> 
-				<Modal
-						               offset={this.state.offset}
-						               open={ this.state.deleteOpen}
-						               modalDidOpen={() => console.log('modal did open')}
-						               modalDidClose={() => this.setState({addOpen: false})}
-						               style={{backgroundColor: "#C5DFC5"}}>
-						               <View style={{
-						               	flexDirection:'column',backgroundColor: "#FFFFFF"
-						               }}>
-						               		<View style={{flexDirection:'row',alignSelf: 'flex-end'}}>
-						               			<CrossButton onPress={() => this.setState({addOpen: false})}>
-						               			</CrossButton>
-						               		</View>
-		                  					<View style={{flexDirection:'row',marginLeft:10 }}>
-		                  						<Text style={this.state.checkboxForenoon ? CheckboxStyle.checkboxGreen : CheckboxStyle.checkboxRed}>
-		                  						{String.fromCharCode(9632)}
-		                  						</Text>
-		                  						<CheckboxButton text="Forenoon" style={{
-	                  						  margin:10,
-	        									padding: 10,
-	        									flex: 0.4,
-	        								}} 
-	        								onPress={()=>this.checkboxForenoonAction()}>
-		                  						
-		                  						</CheckboxButton>
-		                  					</View>
-
-		                  					<View style={{flexDirection:'row',marginLeft:10}}>
-		                  						<Text style={this.state.checkboxAfternoon ? CheckboxStyle.checkboxGreen : CheckboxStyle.checkboxRed}>
-		                  						{String.fromCharCode(9632)}</Text>
-		                  						<CheckboxButton text="Afternoon" style={{
-	                  						  margin:10,
-	        									padding: 10,
-	        									flex: 0.4,
-	        								}} 
-	        								onPress={()=>this.checkboxAfternoonAction()}>
-		                  						
-		                  						</CheckboxButton>
-		                  					</View>
-		                  					
-                  						  <UpdateButton 
-                  						  style={{backgroundColor: '#C5DFC5',
-	                  						  margin:10,
-	        									padding: 10,
-	        									width: 200,
-	        									flex: 0.4,
-	        									alignSelf: 'center',
-	        									borderColor:'#f6f6f6'}} 
-                  						  text="Delete"
-                  						  onPress={()=>this.updateStudentData()}	
-                  						  />
-						               </View>
-				</Modal>  	
 
 			</View>
 		);
